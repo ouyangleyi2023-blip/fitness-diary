@@ -13,7 +13,13 @@ H5 版是网页，本质是在微信内置浏览器里跑，**不能**被搜到�
 
 ## 二、H5 版（已可用）
 
-线上地址：把部署得到的链接发到微信里，点开即用；手机上会自动去掉演示外框，全屏显示。
+线上地址：<https://ouyangleyi2023-blip.github.io/fitness-diary/> （GitHub Pages，微信内置浏览器可直接打开）
+
+仓库：<https://github.com/ouyangleyi2023-blip/fitness-diary> ，Pages 源为 `main` 分支的 `/docs` 目录。
+
+发到微信里点开即用；手机上会自动去掉演示外框，全屏显示。
+
+> 注意：不要用 WorkBuddy 沙箱部署的 `*.app.workbuddy.host` 链接——该域名会拦截微信 UA，在微信里只会显示「请在浏览器中打开」。
 
 - 数据存在浏览器 localStorage，**换设备/换浏览器数据不互通**，这是网页版的固有限制
 - 微信内置浏览器支持添加到「我的收藏」/浮窗，但无法像小程序那样固定到「我的小程序」
