@@ -1,0 +1,81 @@
+<view class="page">
+
+  <!-- 区间切换 -->
+  <view class="tabs">
+    <view class="tab {{range === 'week' ? 'on' : ''}}" data-r="week" bindtap="switchRange">本周</view>
+    <view class="tab {{range === 'month' ? 'on' : ''}}" data-r="month" bindtap="switchRange">近30天</view>
+    <view class="tab {{range === 'all' ? 'on' : ''}}" data-r="all" bindtap="switchRange">全部</view>
+  </view>
+
+  <!-- 核心指标 -->
+  <view class="kpi">
+    <view class="kpi-item">
+      <text class="kpi-n">{{stats.days}}</text><text class="kpi-l">训练天数</text>
+    </view>
+    <view class="kpi-item">
+      <text class="kpi-n">{{stats.duration}}</text><text class="kpi-l">总时长(分)</text>
+    </view>
+    <view class="kpi-item">
+      <text class="kpi-n">{{stats.volume}}</text><text class="kpi-l">总容量(kg)</text>
+    </view>
+    <view class="kpi-item">
+      <text class="kpi-n">{{stats.sets}}</text><text class="kpi-l">总组数</text>
+    </view>
+  </view>
+  <view class="kpi-sub">平均单次 {{stats.avgDuration}} 分钟 · 总次数 {{stats.reps}}</view>
+
+  <!-- 容量柱状图 -->
+  <view class="sec-head"><text class="sec-title">{{chartTitle}}</text></view>
+  <view class="card">
+    <view class="chart" wx:if="{{series.length}}">
+      <view class="chart-item" wx:for="{{series}}" wx:key="label">
+        <text class="chart-val" wx:if="{{item.volume}}">{{item.volume}}</text>
+        <view class="chart-bar {{item.done ? 'on' : ''}}" style="height:{{item.h}}rpx"></view>
+        <text class="chart-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>暂无数据</view>
+  </view>
+
+  <!-- 部位分布 -->
+  <view class="sec-head"><text class="sec-title">部位分布（组数）</text></view>
+  <view class="card" wx:if="{{parts.length}}">
+    <view class="part-row" wx:for="{{parts}}" wx:key="key">
+      <view class="part-name">
+        <view class="part-dot" style="background:{{item.color}}"></view>{{item.name}}
+      </view>
+      <view class="part-bar">
+        <view class="part-bar-in" style="width:{{item.pct}}%;background:{{item.color}}"></view>
+      </view>
+      <text class="part-val">{{item.sets}}</text>
+    </view>
+  </view>
+  <view class="card empty" wx:else>暂无数据</view>
+
+  <!-- 月历热力 -->
+  <view class="sec-head">
+    <text class="sec-title">打卡日历</text>
+    <view class="month-nav">
+      <text class="mn" bindtap="prevMonth">‹</text>
+      <text class="mlabel">{{monthLabel}}</text>
+      <text class="mn" bindtap="nextMonth">›</text>
+    </view>
+  </view>
+  <view class="card">
+    <view class="cal-head">
+      <text>一</text><text>二</text><text>三</text><text>四</text><text>五</text><text>六</text><text>日</text>
+    </view>
+    <view class="cal">
+      <view class="cal-cell {{item.empty ? 'blank' : ''}} {{item.level ? 'lv' + item.level : ''}}" wx:for="{{cells}}" wx:key="date">
+        <text wx:if="{{!item.empty}}">{{item.day}}</text>
+      </view>
+    </view>
+    <view class="cal-legend">
+      <view class="lg"><view class="lg-box"></view>无训练</view>
+      <view class="lg"><view class="lg-box lv1"></view>轻松</view>
+      <view class="lg"><view class="lg-box lv2"></view>常规</view>
+      <view class="lg"><view class="lg-box lv3"></view>高强度</view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,100 @@
+<view class="page">
+
+  <!-- 顶部问候 -->
+  <view class="hero">
+    <view class="hero-top">
+      <view>
+        <view class="hero-hi">{{greeting}}，{{name}}</view>
+        <view class="hero-date">{{dateText}}</view>
+      </view>
+      <view class="hero-badge">
+        <text class="hero-badge-num">{{streak}}</text>
+        <text class="hero-badge-txt">连续天数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日状态卡 -->
+  <view class="card status {{today.done ? 'done' : ''}}">
+    <view class="status-left">
+      <view class="status-title">{{today.done ? '今日已训练' : '今日未训练'}}</view>
+      <view class="status-sub" wx:if="{{today.exercises.length}}">
+        {{today.exercises.length}} 个动作 · {{today.sets}} 组 · {{today.volume}} kg
+      </view>
+      <view class="status-sub" wx:else>还没有训练内容，开始记录今天吧</view>
+    </view>
+    <view class="status-btn" bindtap="toggleDone">{{today.done ? '取消' : '打卡'}}</view>
+  </view>
+
+  <!-- 本周目标 -->
+  <view class="card">
+    <view class="sec-head" style="margin:0 0 16rpx">
+      <text class="sec-title">本周目标</text>
+      <text class="sec-more">{{weekDone}} / {{goal}} 次</text>
+    </view>
+    <view class="progress">
+      <view class="progress-in" style="width:{{pct}}%"></view>
+    </view>
+    <view class="progress-tip" wx:if="{{weekDone >= goal}}">本周目标已完成，保持住 💪</view>
+    <view class="progress-tip" wx:else>还差 {{goal - weekDone}} 次达成目标</view>
+  </view>
+
+  <!-- 今日训练内容 -->
+  <view class="sec-head">
+    <text class="sec-title">今日训练</text>
+    <text class="sec-more" bindtap="goTrain">去记录 ›</text>
+  </view>
+  <view class="card" wx:if="{{today.exercises.length}}">
+    <view class="ex-item" wx:for="{{today.exercises}}" wx:key="id">
+      <view class="ex-dot" style="background:{{item.color}}"></view>
+      <view class="ex-main">
+        <view class="ex-name">{{item.name}}</view>
+        <view class="ex-sets">{{item.setsText}}</view>
+      </view>
+      <view class="ex-right">
+        <text class="ex-vol" wx:if="{{item.volume}}">{{item.volume}}kg</text>
+        <text class="ex-cnt">{{item.setCount}}组</text>
+      </view>
+    </view>
+    <view class="ex-note" wx:if="{{today.note}}">备注：{{today.note}}</view>
+  </view>
+  <view class="card empty" wx:else>今天还没有训练记录，点击下方按钮开始</view>
+
+  <button class="btn-primary go-btn" bindtap="goTrain">开始 / 补录训练</button>
+
+  <!-- 近 7 天 -->
+  <view class="sec-head">
+    <text class="sec-title">近 7 天</text>
+    <text class="sec-more">累计打卡 {{total}} 天</text>
+  </view>
+  <view class="card">
+    <view class="week">
+      <view class="week-item" wx:for="{{week}}" wx:key="date">
+        <view class="week-bar {{item.done ? 'on' : ''}} {{item.isToday ? 'today' : ''}}" style="height:{{item.h}}rpx"></view>
+        <text class="week-label {{item.isToday ? 'on' : ''}}">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 体重 -->
+  <view class="sec-head">
+    <text class="sec-title">今日体重</text>
+    <text class="sec-more" bindtap="goBody">趋势 ›</text>
+  </view>
+  <view class="card weight-card">
+    <view class="weight-input-wrap">
+      <input class="weight-input" type="digit" value="{{weightInput}}" placeholder="输入今日体重"
+             placeholder-class="ph" bindinput="onWeightInput" bindconfirm="saveWeight"/>
+      <text class="weight-unit">kg</text>
+      <view class="weight-save" bindtap="saveWeight">记录</view>
+    </view>
+    <view class="weight-tip" wx:if="{{hasWeight}}">
+      上次 {{lastWeight}}kg · 较上次
+      <text class="{{weightDelta > 0 ? 'up' : (weightDelta < 0 ? 'down' : '')}}">
+        {{weightDelta > 0 ? '+' : ''}}{{weightDelta}}kg
+      </text>
+    </view>
+    <view class="weight-tip" wx:else>还没记录过体重</view>
+  </view>
+
+</view>

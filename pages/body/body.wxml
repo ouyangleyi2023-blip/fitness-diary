@@ -1,0 +1,43 @@
+<view class="page">
+
+  <view class="card">
+    <view class="wt-top">
+      <view>
+        <text class="wt-n">{{latest || '--'}}</text><text class="wt-u">kg</text>
+      </view>
+      <view class="wt-delta {{delta > 0 ? 'up' : (delta < 0 ? 'down' : '')}}" wx:if="{{latest}}">
+        近7天 {{delta > 0 ? '+' : ''}}{{delta}}kg
+      </view>
+    </view>
+    <canvas type="2d" id="wchart" class="chart"></canvas>
+    <view class="wt-stats" wx:if="{{latest}}">
+      <view class="ws"><text class="ws-n">{{minKg}}</text><text class="ws-l">最低</text></view>
+      <view class="ws"><text class="ws-n">{{maxKg}}</text><text class="ws-l">最高</text></view>
+      <view class="ws"><text class="ws-n">{{avgKg}}</text><text class="ws-l">平均</text></view>
+    </view>
+  </view>
+
+  <view class="sec-head"><text class="sec-title">记录体重</text></view>
+  <view class="card">
+    <view class="weight-input-wrap">
+      <input class="weight-input" type="digit" value="{{input}}" placeholder="{{today}} 今日体重"
+             placeholder-class="ph" bindinput="onInput" bindconfirm="save"/>
+      <text class="weight-unit">kg</text>
+      <view class="weight-save" bindtap="save">保存</view>
+    </view>
+  </view>
+
+  <view class="sec-head"><text class="sec-title">历史记录</text><text class="sec-more">共 {{list.length}} 条</text></view>
+  <view class="card" wx:if="{{list.length}}">
+    <view class="wrow" wx:for="{{list}}" wx:key="date">
+      <text class="wr-date">{{item.text}}</text>
+      <text class="wr-kg">{{item.kg}} kg</text>
+      <text class="wr-delta {{item.delta > 0 ? 'up' : (item.delta < 0 ? 'down' : '')}}">
+        {{item.delta > 0 ? '+' : ''}}{{item.delta}}
+      </text>
+      <text class="wr-del" data-date="{{item.date}}" bindtap="del">删除</text>
+    </view>
+  </view>
+  <view class="card empty" wx:else>还没有体重记录</view>
+
+</view>

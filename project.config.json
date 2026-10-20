@@ -1,0 +1,29 @@
+{
+  "description": "每日健身 - 健身记录小程序",
+  "appid": "touristappid",
+  "projectname": "fitness-diary",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "libVersion": "3.0.0",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "coverView": true,
+    "showShadowRootInWxmlPanel": true,
+    "packNpmManually": false,
+    "packNpmRelationList": []
+  },
+  "packOptions": {
+    "ignore": [
+      { "type": "file", "value": "tools_gen_icons.py" },
+      { "type": "file", "value": "README.md" },
+      { "type": "file", "value": "DEPLOY.md" },
+      { "type": "folder", "value": "preview" }
+    ],
+    "include": []
+  },
+  "condition": {}
+}

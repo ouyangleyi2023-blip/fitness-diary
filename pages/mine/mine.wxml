@@ -1,0 +1,80 @@
+<view class="page">
+
+  <!-- 个人卡 -->
+  <view class="card me">
+    <view class="me-avatar">{{profile.name ? profile.name[0] : '健'}}</view>
+    <view class="me-info">
+      <view class="me-name">{{profile.name || '健身达人'}}</view>
+      <view class="me-sub">累计训练 {{total}} 天 · 连续 {{streak}} 天</view>
+    </view>
+  </view>
+
+  <view class="kpi3">
+    <view class="k3"><text class="k3-n">{{total}}</text><text class="k3-l">累计天数</text></view>
+    <view class="k3"><text class="k3-n">{{streak}}</text><text class="k3-l">连续天数</text></view>
+    <view class="k3"><text class="k3-n">{{weightCount}}</text><text class="k3-l">体重记录</text></view>
+  </view>
+
+  <!-- 训练目标 -->
+  <view class="sec-head"><text class="sec-title">训练目标</text></view>
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">每周训练</text>
+      <view class="chips">
+        <view class="chip {{profile.goal === item ? 'on' : ''}}" wx:for="{{goals}}" wx:key="*this"
+              data-g="{{item}}" bindtap="setGoal">{{item}}次</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+    <view class="form-row">
+      <text class="form-label">昵称</text>
+      <input class="form-input" value="{{profile.name}}" placeholder="怎么称呼你" placeholder-class="ph" bindinput="onName"/>
+    </view>
+    <view class="divider"></view>
+    <view class="form-row">
+      <text class="form-label">身高</text>
+      <input class="form-input" type="digit" value="{{profile.height}}" placeholder="172" placeholder-class="ph" bindinput="onHeight"/>
+      <text class="form-unit">cm</text>
+    </view>
+    <view class="divider"></view>
+    <view class="form-row">
+      <text class="form-label">性别</text>
+      <view class="chips">
+        <view class="chip {{profile.gender === 'male' ? 'on' : ''}}" data-g="male" bindtap="setGender">男</view>
+        <view class="chip {{profile.gender === 'female' ? 'on' : ''}}" data-g="female" bindtap="setGender">女</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 入口 -->
+  <view class="sec-head"><text class="sec-title">数据</text></view>
+  <view class="card">
+    <view class="cell" bindtap="goBody">
+      <text class="cell-t">体重记录</text>
+      <text class="cell-v">{{lastWeight}}</text>
+      <text class="cell-a">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="cell" bindtap="exportData">
+      <text class="cell-t">导出数据（复制 JSON）</text>
+      <text class="cell-v"></text>
+      <text class="cell-a">›</text>
+    </view>
+    <view class="divider"></view>
+    <view class="cell" bindtap="loadDemo">
+      <text class="cell-t">载入示例数据</text>
+      <text class="cell-v"></text>
+      <text class="cell-a">›</text>
+    </view>
+  </view>
+
+  <view class="card danger">
+    <view class="cell" bindtap="clearData">
+      <text class="cell-t danger-t">清空全部数据</text>
+      <text class="cell-a">›</text>
+    </view>
+  </view>
+
+  <view class="foot">每日健身 v{{version}} · 数据保存在本机</view>
+
+</view>

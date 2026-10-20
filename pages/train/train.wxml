@@ -1,0 +1,127 @@
+<view class="page">
+
+  <!-- 日期切换 -->
+  <view class="daybar">
+    <view class="day-arrow" data-d="-1" bindtap="changeDay">‹</view>
+    <view class="day-mid">
+      <text class="day-text">{{dateText}}</text>
+      <text class="day-tag" wx:if="{{isToday}}">今天</text>
+    </view>
+    <view class="day-arrow {{isToday ? 'off' : ''}}" data-d="1" bindtap="changeDay">›</view>
+  </view>
+
+  <!-- 汇总 -->
+  <view class="card sum">
+    <view class="sum-item"><text class="sum-n">{{summary.count}}</text><text class="sum-l">动作</text></view>
+    <view class="sum-item"><text class="sum-n">{{summary.sets}}</text><text class="sum-l">组数</text></view>
+    <view class="sum-item"><text class="sum-n">{{summary.volume}}</text><text class="sum-l">容量kg</text></view>
+    <view class="sum-item"><text class="sum-n">{{duration || 0}}</text><text class="sum-l">分钟</text></view>
+  </view>
+
+  <!-- 动作列表 -->
+  <view class="sec-head">
+    <text class="sec-title">训练动作</text>
+    <text class="sec-more" bindtap="clearDay">清空当天</text>
+  </view>
+
+  <view wx:if="{{rows.length}}">
+    <view class="card ex-card" wx:for="{{rows}}" wx:for-item="ex" wx:for-index="i" wx:key="id">
+      <view class="ex-head">
+        <view class="ex-dot" style="background:{{ex.color}}"></view>
+        <text class="ex-name">{{ex.name}}</text>
+        <text class="tag" style="background:{{ex.color}}22;color:{{ex.color}}">{{ex.partName}}</text>
+        <view class="ex-del" data-i="{{i}}" bindtap="delEx">删除</view>
+      </view>
+
+      <view class="set-row set-head" wx:if="{{ex.showW}}">
+        <text class="set-idx">组</text>
+        <text class="set-cell">重量(kg)</text>
+        <text class="set-cell">次数</text>
+        <text class="set-op"></text>
+      </view>
+      <view class="set-row set-head" wx:else>
+        <text class="set-idx">组</text>
+        <text class="set-cell">{{ex.mode === 'time' ? '时长(分钟)' : '次数'}}</text>
+        <text class="set-op"></text>
+      </view>
+
+      <view class="set-row" wx:for="{{ex.sets}}" wx:for-item="s" wx:for-index="j" wx:key="id">
+        <text class="set-idx">{{j + 1}}</text>
+        <block wx:if="{{ex.showW}}">
+          <input class="set-cell set-input" type="digit" value="{{s.w}}" placeholder="0"
+                 data-i="{{i}}" data-j="{{j}}" data-f="w" bindinput="onSetInput"/>
+          <input class="set-cell set-input" type="number" value="{{s.r}}" placeholder="0"
+                 data-i="{{i}}" data-j="{{j}}" data-f="r" bindinput="onSetInput"/>
+        </block>
+        <block wx:else>
+          <input class="set-cell set-input wide" type="digit" value="{{s.r}}" placeholder="0"
+                 data-i="{{i}}" data-j="{{j}}" data-f="r" bindinput="onSetInput"/>
+        </block>
+        <text class="set-op" data-i="{{i}}" data-j="{{j}}" bindtap="delSet">×</text>
+      </view>
+
+      <view class="ex-foot">
+        <text class="ex-vol" wx:if="{{ex.volume}}">小计 {{ex.volume}} kg</text>
+        <text class="ex-vol" wx:else>小计 —</text>
+        <view class="add-set" data-i="{{i}}" bindtap="addSet">+ 加一组</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card empty" wx:else>还没有动作，点击下方「添加动作」开始记录</view>
+
+  <view class="add-ex" bindtap="openPicker">+ 添加动作</view>
+
+  <!-- 时长 / 备注 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">训练时长</text>
+      <input class="form-input" type="number" value="{{duration}}" placeholder="分钟"
+             placeholder-class="ph" bindinput="onDuration"/>
+      <text class="form-unit">分钟</text>
+    </view>
+    <view class="divider"></view>
+    <view class="form-row">
+      <text class="form-label">训练备注</text>
+      <input class="form-input" value="{{note}}" placeholder="今天状态如何？"
+             placeholder-class="ph" bindinput="onNote"/>
+    </view>
+  </view>
+
+  <button class="btn-primary go-btn {{summary.done ? 'plain' : ''}}" bindtap="finish">
+    {{summary.done ? '已打卡 · 再记一次' : '完成训练并打卡'}}
+  </button>
+
+</view>
+
+<!-- 动作库弹层 -->
+<view class="mask {{showPicker ? 'on' : ''}}" bindtap="closePicker"></view>
+<view class="sheet {{showPicker ? 'on' : ''}}">
+  <view class="sheet-head">
+    <text class="sheet-title">选择动作</text>
+    <text class="sheet-close" bindtap="closePicker">关闭</text>
+  </view>
+
+  <scroll-view class="part-scroll" scroll-x>
+    <view class="part-scroll-in">
+      <view class="part-chip {{pickerPart === item.key ? 'on' : ''}}" wx:for="{{parts}}" wx:key="key"
+            data-p="{{item.key}}" bindtap="selectPart">{{item.name}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="search-row">
+    <input class="search-input" value="{{keyword}}" placeholder="搜索动作名称" placeholder-class="ph" bindinput="onSearch"/>
+    <input class="custom-input" value="{{customName}}" placeholder="自定义动作名" placeholder-class="ph" bindinput="onCustomInput"/>
+    <view class="custom-add" bindtap="addCustom">添加</view>
+  </view>
+
+  <scroll-view class="pick-list" scroll-y>
+    <view class="pick-item" wx:for="{{pickerList}}" wx:key="name" data-name="{{item.name}}" data-part="{{item.part}}" data-mode="{{item.mode}}" bindtap="pickExercise">
+      <view class="pick-dot" style="background:{{item.color}}"></view>
+      <text class="pick-name">{{item.name}}</text>
+      <text class="pick-mode">{{item.modeText}}</text>
+    </view>
+    <view class="pick-empty" wx:if="{{!pickerList.length}}">没有匹配的动作</view>
+    <view style="height:40rpx"></view>
+  </scroll-view>
+</view>

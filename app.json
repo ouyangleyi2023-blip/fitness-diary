@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/train/train",
+    "pages/stats/stats",
+    "pages/mine/mine",
+    "pages/body/body"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0F1115",
+    "navigationBarTitleText": "每日健身",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0F1115",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#7A8090",
+    "selectedColor": "#FF6B35",
+    "backgroundColor": "#15181F",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日",
+        "iconPath": "assets/tab/home.png",
+        "selectedIconPath": "assets/tab/home-on.png"
+      },
+      {
+        "pagePath": "pages/train/train",
+        "text": "训练",
+        "iconPath": "assets/tab/train.png",
+        "selectedIconPath": "assets/tab/train-on.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计",
+        "iconPath": "assets/tab/stats.png",
+        "selectedIconPath": "assets/tab/stats-on.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/tab/mine.png",
+        "selectedIconPath": "assets/tab/mine-on.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
