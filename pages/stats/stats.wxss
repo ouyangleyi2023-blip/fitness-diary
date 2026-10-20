@@ -58,3 +58,31 @@
 .lg-box.lv1 { background: rgba(255,107,53,.22); }
 .lg-box.lv2 { background: rgba(255,107,53,.48); }
 .lg-box.lv3 { background: #FF6B35; }
+
+/* ---- 步数 ---- */
+.steps { display: flex; align-items: center; justify-content: space-between; padding: 26rpx 24rpx; }
+.steps-l1 { display: block; font-size: 24rpx; color: var(--text-3); }
+.steps-l2 { display: block; font-size: 26rpx; margin-top: 6rpx; }
+.steps-r { text-align: right; }
+.steps-n { display: block; font-size: 38rpx; font-weight: 700; color: var(--brand); }
+.steps-u { display: block; font-size: 20rpx; color: var(--text-3); margin-top: 4rpx; }
+
+/* ---- PR 榜 ---- */
+.pr-row { display: flex; align-items: center; padding: 18rpx 4rpx; border-bottom: 1rpx solid var(--line); }
+.pr-row:last-child { border-bottom: none; }
+.pr-rank { width: 36rpx; font-size: 24rpx; color: var(--text-3); font-weight: 700; }
+.pr-dot { width: 8rpx; height: 30rpx; border-radius: 5rpx; margin-right: 16rpx; }
+.pr-info { flex: 1; }
+.pr-name { display: block; font-size: 28rpx; }
+.pr-sub { display: block; font-size: 20rpx; color: var(--text-3); margin-top: 4rpx; }
+.pr-nums { text-align: right; }
+.pr-e { display: block; font-size: 30rpx; font-weight: 700; color: #FFD60A; }
+.pr-w { display: block; font-size: 20rpx; color: var(--text-3); margin-top: 4rpx; }
+
+/* ---- 常用动作 ---- */
+.fq-row { display: flex; align-items: center; padding: 16rpx 4rpx; }
+.fq-dot { width: 8rpx; height: 26rpx; border-radius: 5rpx; margin-right: 14rpx; }
+.fq-name { width: 190rpx; font-size: 26rpx; }
+.fq-bar { flex: 1; height: 14rpx; background: var(--surface-2); border-radius: 7rpx; overflow: hidden; margin-right: 16rpx; }
+.fq-bar-in { height: 100%; border-radius: 7rpx; }
+.fq-val { width: 90rpx; text-align: right; font-size: 22rpx; color: var(--text-3); }

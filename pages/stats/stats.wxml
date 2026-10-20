@@ -16,13 +16,25 @@
       <text class="kpi-n">{{stats.duration}}</text><text class="kpi-l">总时长(分)</text>
     </view>
     <view class="kpi-item">
-      <text class="kpi-n">{{stats.volume}}</text><text class="kpi-l">总容量(kg)</text>
+      <text class="kpi-n">{{stats.volume}}</text><text class="kpi-l">总容量({{unitText}})</text>
     </view>
     <view class="kpi-item">
       <text class="kpi-n">{{stats.sets}}</text><text class="kpi-l">总组数</text>
     </view>
   </view>
   <view class="kpi-sub">平均单次 {{stats.avgDuration}} 分钟 · 总次数 {{stats.reps}}</view>
+
+  <!-- 日常活动 -->
+  <view class="card steps">
+    <view class="steps-l">
+      <text class="steps-l1">近 7 天步数</text>
+      <text class="steps-l2">{{steps.avg}} 步 / 天</text>
+    </view>
+    <view class="steps-r">
+      <text class="steps-n">{{steps.sum}}</text>
+      <text class="steps-u">7 天累计</text>
+    </view>
+  </view>
 
   <!-- 容量柱状图 -->
   <view class="sec-head"><text class="sec-title">{{chartTitle}}</text></view>
@@ -48,6 +60,40 @@
         <view class="part-bar-in" style="width:{{item.pct}}%;background:{{item.color}}"></view>
       </view>
       <text class="part-val">{{item.sets}}</text>
+    </view>
+  </view>
+  <view class="card empty" wx:else>暂无数据</view>
+
+  <!-- 力量 PR 榜 -->
+  <view class="sec-head">
+    <text class="sec-title">力量纪录（估算 1RM）</text>
+  </view>
+  <view class="card" wx:if="{{prs.length}}">
+    <view class="pr-row" wx:for="{{prs}}" wx:key="name">
+      <text class="pr-rank">{{index + 1}}</text>
+      <view class="pr-dot" style="background:{{item.color}}"></view>
+      <view class="pr-info">
+        <text class="pr-name">{{item.name}}</text>
+        <text class="pr-sub">{{item.partName}} · {{item.dateText}}</text>
+      </view>
+      <view class="pr-nums">
+        <text class="pr-e">{{item.e}}{{unitText}}</text>
+        <text class="pr-w">最重 {{item.w}}{{unitText}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="card empty" wx:else>还没有负重训练记录</view>
+
+  <!-- 常用动作 -->
+  <view class="sec-head"><text class="sec-title">我的高频动作</text></view>
+  <view class="card" wx:if="{{freq.length}}">
+    <view class="fq-row" wx:for="{{freq}}" wx:key="name">
+      <view class="fq-dot" style="background:{{item.color}}"></view>
+      <text class="fq-name">{{item.name}}</text>
+      <view class="fq-bar">
+        <view class="fq-bar-in" style="width:{{item.count / freq[0].count * 100}}%;background:{{item.color}}"></view>
+      </view>
+      <text class="fq-val">{{item.count}} 组</text>
     </view>
   </view>
   <view class="card empty" wx:else>暂无数据</view>

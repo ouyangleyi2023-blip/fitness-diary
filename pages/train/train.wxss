@@ -94,3 +94,28 @@
 .pick-name { flex: 1; font-size: 30rpx; }
 .pick-mode { font-size: 22rpx; color: var(--text-3); }
 .pick-empty { padding: 60rpx 0; text-align: center; color: var(--text-3); font-size: 26rpx; }
+
+/* ---- 今日模板卡片 ---- */
+.tpl-card { display: flex; align-items: center; padding: 24rpx; }
+.tpl-left { flex: 1; }
+.tpl-label { display: block; font-size: 22rpx; color: var(--text-3); }
+.tpl-name { display: block; font-size: 30rpx; font-weight: 600; margin-top: 6rpx; }
+.tpl-hint { display: block; font-size: 22rpx; color: var(--text-3); margin-top: 8rpx; }
+.tpl-btn {
+  padding: 0 34rpx; height: 68rpx; line-height: 68rpx; border-radius: 34rpx;
+  font-size: 26rpx; margin-left: 20rpx;
+}
+
+/* ---- 上次成绩 / PR ---- */
+.ex-last {
+  font-size: 22rpx; color: var(--text-3); padding: 10rpx 0 4rpx;
+  border-left: 4rpx solid var(--line); padding-left: 14rpx;
+}
+.ex-last.first { color: var(--brand); border-left-color: rgba(255,107,53,.5); }
+.tag-pr {
+  font-size: 20rpx; font-weight: 700; padding: 2rpx 10rpx; border-radius: 6rpx;
+  background: rgba(255,214,10,.18); color: #FFD60A; margin-left: 8rpx;
+}
+.ex-delta { font-size: 22rpx; color: var(--text-3); margin-left: 14rpx; }
+.ex-delta.up { color: #FFD60A; }
+.ex-delta.same { color: var(--text-3); }

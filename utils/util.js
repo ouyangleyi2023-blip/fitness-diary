@@ -22,6 +22,9 @@ function addDays(s, n) {
 
 function weekday(s) { return WEEK_CN[parse(s).getDay()]; }
 
+// 星期序号 0–6（周日=0），用于把训练模板绑定到具体某天
+function dow(s) { return parse(s).getDay(); }
+
 function dateText(s) {
   const p = s.split('-');
   return (+p[1]) + '月' + (+p[2]) + '日';
@@ -77,6 +80,6 @@ function greeting() {
 }
 
 module.exports = {
-  WEEK_CN, pad, fmt, today, parse, addDays, weekday, dateText, dateTextFull,
+  WEEK_CN, pad, fmt, today, parse, addDays, weekday, dow, dateText, dateTextFull,
   isToday, monthKey, daysInMonth, weekDates, lastDays, uid, round1, num, greeting
 };

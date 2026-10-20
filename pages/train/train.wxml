@@ -24,14 +24,27 @@
     <text class="sec-more" bindtap="clearDay">清空当天</text>
   </view>
 
+  <!-- 今日模板 -->
+  <view class="card tpl-card" wx:if="{{hasTpl && !rows.length}}">
+    <view class="tpl-left">
+      <text class="tpl-label">今日计划</text>
+      <text class="tpl-name">{{tplName}}</text>
+      <text class="tpl-hint">将自动套用动作，并带入你上次的训练数据</text>
+    </view>
+    <view class="btn-primary tpl-btn" bindtap="applyTpl">套用</view>
+  </view>
+
   <view wx:if="{{rows.length}}">
     <view class="card ex-card" wx:for="{{rows}}" wx:for-item="ex" wx:for-index="i" wx:key="id">
       <view class="ex-head">
         <view class="ex-dot" style="background:{{ex.color}}"></view>
         <text class="ex-name">{{ex.name}}</text>
         <text class="tag" style="background:{{ex.color}}22;color:{{ex.color}}">{{ex.partName}}</text>
+        <text class="tag-pr" wx:if="{{ex.isPR}}">PR</text>
         <view class="ex-del" data-i="{{i}}" bindtap="delEx">删除</view>
       </view>
+
+      <view class="ex-last {{ex.hasLast ? '' : 'first'}}">{{ex.lastText}}</view>
 
       <view class="set-row set-head" wx:if="{{ex.showW}}">
         <text class="set-idx">组</text>
@@ -63,6 +76,9 @@
       <view class="ex-foot">
         <text class="ex-vol" wx:if="{{ex.volume}}">小计 {{ex.volume}} kg</text>
         <text class="ex-vol" wx:else>小计 —</text>
+        <text class="ex-delta up" wx:if="{{ex.delta > 0}}">较上次 +{{ex.delta}}kg</text>
+        <text class="ex-delta" wx:elif="{{ex.delta < 0}}">较上次 {{ex.delta}}kg</text>
+        <text class="ex-delta same" wx:elif="{{ex.delta === 0 && ex.hasLast}}">与上次持平</text>
         <view class="add-set" data-i="{{i}}" bindtap="addSet">+ 加一组</view>
       </view>
     </view>

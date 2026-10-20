@@ -83,6 +83,33 @@ function partInfo(key) {
   return { key: key, name: '其他', color: '#8A8F98' };
 }
 
+// 常见训练分化模板：一键套用到某个训练日
+const PRESET_TPL = {
+  push:  { name: '推 · 胸肩三头', exs: [['杠铃卧推', 3, 8], ['上斜哑铃卧推', 3, 10], ['哑铃侧平举', 3, 15], ['绳索下压', 3, 12]] },
+  pull:  { name: '拉 · 背二头', exs: [['引体向上', 3, 8], ['杠铃划船', 3, 10], ['坐姿划船', 3, 12], ['杠铃弯举', 3, 10]] },
+  legs:  { name: '腿 · 股四头臀', exs: [['杠铃深蹲', 4, 8], ['罗马尼亚硬拉', 3, 10], ['腿举', 3, 12], ['站姿提踵', 3, 15]] },
+  upper: { name: '上肢 · 胸背肩臂', exs: [['杠铃卧推', 3, 8], ['高位下拉', 3, 10], ['杠铃推举', 3, 10], ['哑铃弯举', 3, 12]] },
+  lower: { name: '下肢 · 腿臀核心', exs: [['杠铃深蹲', 4, 8], ['保加利亚分腿蹲', 3, 10], ['俯卧腿弯举', 3, 12], ['卷腹', 3, 20]] },
+  full:  { name: '全身 · 复合为主', exs: [['杠铃深蹲', 3, 8], ['杠铃卧推', 3, 8], ['杠铃划船', 3, 10], ['平板支撑', 3, 1]] },
+  core:  { name: '核心 + 有氧', exs: [['平板支撑', 3, 1], ['悬垂举腿', 3, 12], ['俄罗斯转体', 3, 20], ['跑步', 1, 25]] }
+};
+
+function find(name) {
+  for (let i = 0; i < LIST.length; i++) if (LIST[i].n === name) return LIST[i];
+  return null;
+}
+
+// 生成模板对象 {name, exs:[{name, part, mode, sets, reps}]}
+function buildTpl(key) {
+  const p = PRESET_TPL[key];
+  if (!p) return { name: '', exs: [] };
+  const exs = p.exs.map(function (e) {
+    const L = find(e[0]) || { p: 'core', m: 'weight' };
+    return { name: e[0], part: L.p, mode: L.m, sets: e[1], reps: e[2] };
+  });
+  return { name: p.name, exs: exs };
+}
+
 function search(kw, part) {
   const k = (kw || '').trim().toLowerCase();
   return LIST.filter(function (e) {
@@ -94,4 +121,4 @@ function search(kw, part) {
   });
 }
 
-module.exports = { PARTS, LIST, MODE_TEXT, UNIT_W, partInfo, search };
+module.exports = { PARTS, LIST, MODE_TEXT, UNIT_W, partInfo, search, PRESET_TPL, buildTpl, find };

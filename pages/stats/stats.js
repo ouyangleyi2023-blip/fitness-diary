@@ -7,6 +7,7 @@ Page({
     stats: { days: 0, volume: 0, sets: 0, reps: 0, duration: 0, avgDuration: 0 },
     series: [], chartTitle: '',
     parts: [],
+    prs: [], freq: [], steps: { sum: 0, days: 0, avg: 0 },
     ym: '', monthLabel: '', cells: []
   },
 
@@ -28,12 +29,24 @@ Page({
     const series = this.buildSeries(range, dates);
     const ym = this.data.ym || U.monthKey(U.today());
     const p = ym.split('-');
+    const unit = S.getProfile().unit === 'lb' ? 'lb' : 'kg';
+    const disp = function (w) { return unit === 'lb' ? U.round1(w * 2.20462) : U.round1(w); };
 
     this.setData({
       stats: stats,
       parts: parts,
       series: series,
       chartTitle: title,
+      unitText: unit,
+      // PR 与训练量按当前单位换算后展示
+      prs: S.prBoard(6).map(function (x) {
+        return {
+          name: x.name, color: x.color, partName: x.partName,
+          e: disp(x.e), w: disp(x.w), dateText: U.dateText(x.date)
+        };
+      }),
+      freq: S.freqRank(8),
+      steps: S.rangeSteps(U.lastDays(7)),
       monthLabel: p[0] + '年' + (+p[1]) + '月',
       cells: S.calendar(ym)
     });

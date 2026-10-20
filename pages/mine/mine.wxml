@@ -5,8 +5,9 @@
     <view class="me-avatar">{{profile.name ? profile.name[0] : '健'}}</view>
     <view class="me-info">
       <view class="me-name">{{profile.name || '健身达人'}}</view>
-      <view class="me-sub">累计训练 {{total}} 天 · 连续 {{streak}} 天</view>
+      <view class="me-sub">{{goals[profile.goal] || '增肌'}} · {{levels[profile.level] || '进阶'}} · {{slots[profile.slot] || '晚上'}}训练</view>
     </view>
+    <view class="me-edit" bindtap="toggleEdit">{{editing ? '收起' : '编辑'}}</view>
   </view>
 
   <view class="kpi3">
@@ -15,38 +16,125 @@
     <view class="k3"><text class="k3-n">{{weightCount}}</text><text class="k3-l">体重记录</text></view>
   </view>
 
-  <!-- 训练目标 -->
-  <view class="sec-head"><text class="sec-title">训练目标</text></view>
+  <!-- 我的健身习惯 -->
+  <view class="sec-head"><text class="sec-title">我的健身习惯</text></view>
+  <view class="card">
+
+    <view class="form-row">
+      <text class="form-label">训练目标</text>
+      <view class="chips">
+        <view class="chip {{profile.goal === item ? 'on' : ''}}" wx:for="{{goalOpts}}" wx:key="*this"
+              data-v="{{item}}" bindtap="onGoal">{{goals[item]}}</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">训练经验</text>
+      <view class="chips">
+        <view class="chip {{profile.level === item ? 'on' : ''}}" wx:for="{{levelOpts}}" wx:key="*this"
+              data-v="{{item}}" bindtap="onLevel">{{levels[item]}}</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">训练时段</text>
+      <view class="chips">
+        <view class="chip {{profile.slot === item ? 'on' : ''}}" wx:for="{{slotOpts}}" wx:key="*this"
+              data-v="{{item}}" bindtap="onSlot">{{slots[item]}}</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">训练日</text>
+      <view class="chips">
+        <view class="chip wd {{weekDays[index] ? 'on' : ''}}" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this"
+              data-i="{{index}}" bindtap="toggleWeekDay">周{{item}}</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">默认组数</text>
+      <input class="form-input sm" type="number" value="{{profile.defSets}}" placeholder="3" placeholder-class="ph" bindinput="onDefSets"/>
+      <text class="form-unit">组/动作</text>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">组间休息</text>
+      <input class="form-input sm" type="number" value="{{profile.restSec}}" placeholder="90" placeholder-class="ph" bindinput="onRestSec"/>
+      <text class="form-unit">秒</text>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">重量单位</text>
+      <view class="chips">
+        <view class="chip {{profile.unit === 'kg' ? 'on' : ''}}" data-v="kg" bindtap="onUnit">kg</view>
+        <view class="chip {{profile.unit === 'lb' ? 'on' : ''}}" data-v="lb" bindtap="onUnit">lb</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+
+    <view class="form-row">
+      <text class="form-label">自动带入上次成绩</text>
+      <switch checked="{{profile.autoFill}}" color="#FF6B35" bindchange="toggleAuto"/>
+    </view>
+
+    <block wx:if="{{editing}}">
+      <view class="divider"></view>
+      <view class="form-row">
+        <text class="form-label">昵称</text>
+        <input class="form-input" value="{{profile.name}}" placeholder="怎么称呼你" placeholder-class="ph" bindinput="onName"/>
+      </view>
+      <view class="divider"></view>
+      <view class="form-row">
+        <text class="form-label">身高</text>
+        <input class="form-input sm" type="digit" value="{{profile.height}}" placeholder="172" placeholder-class="ph" bindinput="onHeight"/>
+        <text class="form-unit">cm</text>
+      </view>
+      <view class="divider"></view>
+      <view class="form-row">
+        <text class="form-label">性别</text>
+        <view class="chips">
+          <view class="chip {{profile.gender === 'male' ? 'on' : ''}}" data-v="male" bindtap="toggleGender">男</view>
+          <view class="chip {{profile.gender === 'female' ? 'on' : ''}}" data-v="female" bindtap="toggleGender">女</view>
+        </view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- 今日步数 -->
+  <view class="sec-head"><text class="sec-title">今日活动</text></view>
   <view class="card">
     <view class="form-row">
-      <text class="form-label">每周训练</text>
-      <view class="chips">
-        <view class="chip {{profile.goal === item ? 'on' : ''}}" wx:for="{{goals}}" wx:key="*this"
-              data-g="{{item}}" bindtap="setGoal">{{item}}次</view>
-      </view>
-    </view>
-    <view class="divider"></view>
-    <view class="form-row">
-      <text class="form-label">昵称</text>
-      <input class="form-input" value="{{profile.name}}" placeholder="怎么称呼你" placeholder-class="ph" bindinput="onName"/>
-    </view>
-    <view class="divider"></view>
-    <view class="form-row">
-      <text class="form-label">身高</text>
-      <input class="form-input" type="digit" value="{{profile.height}}" placeholder="172" placeholder-class="ph" bindinput="onHeight"/>
-      <text class="form-unit">cm</text>
-    </view>
-    <view class="divider"></view>
-    <view class="form-row">
-      <text class="form-label">性别</text>
-      <view class="chips">
-        <view class="chip {{profile.gender === 'male' ? 'on' : ''}}" data-g="male" bindtap="setGender">男</view>
-        <view class="chip {{profile.gender === 'female' ? 'on' : ''}}" data-g="female" bindtap="setGender">女</view>
-      </view>
+      <text class="form-label">今日步数</text>
+      <input class="form-input sm" type="number" value="{{todaySteps}}" placeholder="手动记录" placeholder-class="ph" bindinput="onSteps"/>
+      <text class="form-unit">步</text>
     </view>
   </view>
 
-  <!-- 入口 -->
+  <!-- 每周训练计划 -->
+  <view class="sec-head">
+    <text class="sec-title">每周训练计划</text>
+    <text class="sec-more" bindtap="newTpl">+ 新建</text>
+  </view>
+  <view class="card" wx:if="{{tpls}}">
+    <block wx:for="{{['日','一','二','三','四','五','六']}}" wx:for-item="dn" wx:for-index="di" wx:key="*this">
+      <view class="cell" data-i="{{di}}" bindtap="pickTpl">
+        <text class="cell-t">周{{dn}}</text>
+        <text class="cell-v">{{tpls[di] ? tpls[di].name + ' · ' + tpls[di].exs.length + ' 个动作' : '休息日'}}</text>
+        <text class="cell-a">›</text>
+      </view>
+      <view class="divider" wx:if="{{di < 6}}"></view>
+    </block>
+  </view>
+
+  <!-- 数据 -->
   <view class="sec-head"><text class="sec-title">数据</text></view>
   <view class="card">
     <view class="cell" bindtap="goBody">
@@ -57,13 +145,11 @@
     <view class="divider"></view>
     <view class="cell" bindtap="exportData">
       <text class="cell-t">导出数据（复制 JSON）</text>
-      <text class="cell-v"></text>
       <text class="cell-a">›</text>
     </view>
     <view class="divider"></view>
     <view class="cell" bindtap="loadDemo">
       <text class="cell-t">载入示例数据</text>
-      <text class="cell-v"></text>
       <text class="cell-a">›</text>
     </view>
   </view>
@@ -77,4 +163,43 @@
 
   <view class="foot">每日健身 v{{version}} · 数据保存在本机</view>
 
+</view>
+
+<!-- 模板编辑弹层 -->
+<view class="mask {{selTpl !== null ? 'on' : ''}}" bindtap="closeTpl"></view>
+<view class="sheet {{selTpl !== null ? 'on' : ''}}">
+  <view class="sheet-head">
+    <text class="sheet-title">{{selTpl >= 0 ? '编辑训练计划' : '新建训练计划'}}</text>
+    <text class="sheet-close" bindtap="closeTpl">关闭</text>
+  </view>
+
+  <!-- 从预设快速生成 -->
+  <scroll-view class="preset-scroll" scroll-x wx:if="{{selTpl === -1}}">
+    <view class="preset-in">
+      <view class="part-chip" wx:for="{{presets}}" wx:key="*this" data-k="{{item}}" bindtap="tplPickKey">
+        {{item === 'push' ? '推' : item === 'pull' ? '拉' : item === 'legs' ? '腿' : item === 'upper' ? '上肢' : item === 'lower' ? '下肢' : item === 'full' ? '全身' : '核心'}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="tpl-list">
+    <view class="tpl-row" wx:for="{{tplEditing}}" wx:key="name">
+      <text class="tpl-rname">{{item.name}}</text>
+      <text class="tpl-rsub">{{item.sets}}组 × {{item.reps}}{{item.mode === 'time' ? '分钟' : '次'}}</text>
+      <text class="tpl-rdel" data-i="{{index}}" bindtap="delTplRow">×</text>
+    </view>
+    <view class="pick-empty" wx:if="{{!tplEditing.length}}">还没有动作</view>
+  </view>
+
+  <view class="search-row">
+    <input class="search-input" value="{{tplNewName}}" placeholder="动作名（如 杠铃卧推）" placeholder-class="ph" bindinput="onTplName"/>
+    <input class="custom-input sm2" type="number" value="{{tplNewSets}}" placeholder="组数" placeholder-class="ph" bindinput="onTplSets"/>
+    <input class="custom-input sm2" type="number" value="{{tplNewReps}}" placeholder="次数" placeholder-class="ph" bindinput="onTplReps"/>
+    <view class="custom-add" bindtap="addTplRow">添加</view>
+  </view>
+
+  <view class="tpl-ops">
+    <view class="tpl-del" wx:if="{{selTpl >= 0}}" bindtap="deleteTpl">删除此计划</view>
+    <view class="tpl-save" bindtap="saveTpl">保存</view>
+  </view>
 </view>

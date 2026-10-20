@@ -8,6 +8,8 @@ Page({
     rows: [],
     duration: 0, note: '',
     summary: { count: 0, sets: 0, volume: 0, done: false },
+    tplName: '', hasTpl: false,
+    freqList: [],
     showPicker: false, pickerPart: 'chest', parts: [], pickerList: [], keyword: '', customName: ''
   },
 
@@ -23,30 +25,73 @@ Page({
 
   load: function (date) {
     this._log = S.getLog(date);
+    const tpl = S.getTemplate(U.dow(date));
     this.setData({
       date: date,
       dateText: U.dateTextFull(date),
       isToday: U.isToday(date),
       duration: this._log.duration || '',
-      note: this._log.note || ''
+      note: this._log.note || '',
+      tplName: tpl ? tpl.name : '',
+      hasTpl: !!tpl,
+      freqList: S.freqRank(6).map(function (x) { return { name: x.name, count: x.count, color: x.color }; })
     });
+    // 训练日 + 空清单 + 开启了自动带入 → 直接套用模板并填入上次成绩
+    if (!this._log.exercises.length && tpl && this.data.isToday) {
+      const n = S.applyTemplate(date);
+      if (n) {
+        this._log = S.getLog(date);
+        wx.showToast({ title: '已套用「' + tpl.name + '」并带入上次成绩', icon: 'none', duration: 2200 });
+      }
+    }
     this.render();
   },
 
-  // 重新渲染动作行 + 汇总
+  // 一键套用当天的训练模板
+  applyTpl: function () {
+    const n = S.applyTemplate(this.data.date);
+    if (!n) { wx.showToast({ title: '今天已有动作，或未设置模板', icon: 'none' }); return; }
+    this._log = S.getLog(this.data.date);
+    this.render();
+    wx.showToast({ title: '已套用「' + this.data.tplName + '」', icon: 'none' });
+  },
+
+  // 重新渲染动作行 + 汇总（含与上次成绩的对比、PR 标记）
   render: function () {
     const log = this._log;
+    const date = this.data.date;
+    const self = this;
     const rows = log.exercises.map(function (ex) {
-      let vol = 0;
+      let vol = 0, bestE = 0;
       (ex.sets || []).forEach(function (s) {
-        if (ex.mode === 'weight') vol += U.num(s.w) * U.num(s.r);
+        if (ex.mode === 'weight') {
+          vol += U.num(s.w) * U.num(s.r);
+          const e = S.e1rm(s.w, s.r);
+          if (e > bestE) bestE = e;
+        }
       });
+      const last = S.lastPerf(ex.name, date);          // 本次之前的最近一次
+      const best = S.bestOf(ex.name);
+      const curW = ex.mode === 'weight' ? U.num(ex.sets[0] ? ex.sets[0].w : 0) : 0;
+      const lastW = last && last.mode === 'weight' ? U.num(last.sets[0].w) : 0;
+      // 上次首组重量 → 单位统一后的展示文案
+      let lastText = '首次记录';
+      if (last) {
+        const s0 = last.sets[0];
+        lastText = '上次 ' + U.dateText(last.date) + ' · ' +
+          (ex.mode === 'weight' ? U.num(s0.w) + 'kg×' + U.num(s0.r)
+            : (ex.mode === 'time' ? U.num(s0.r) + '分钟' : U.num(s0.r) + '次'));
+      }
       return {
         id: ex.id, name: ex.name, part: ex.part, mode: ex.mode,
         color: E.partInfo(ex.part).color, partName: E.partInfo(ex.part).name,
         sets: ex.sets, volume: Math.round(vol),
         unitW: ex.mode === 'weight' ? 'kg' : (ex.mode === 'time' ? '分钟' : '次'),
-        showW: ex.mode === 'weight'
+        showW: ex.mode === 'weight',
+        lastText: lastText,
+        hasLast: !!last,
+        delta: lastW && curW ? Math.round((curW - lastW) * 10) / 10 : 0,
+        isPR: bestE > 0 && best.e1rm > 0 && bestE >= best.e1rm
       };
     });
     const dec = S.decorate(log);
@@ -106,11 +151,33 @@ Page({
   },
 
   addExercise: function (name, part, mode) {
-    const ex = { id: U.uid(), name: name, part: part, mode: mode, sets: [{ id: U.uid(), w: '', r: '' }] };
-    this._log.exercises.push(ex);
+    // 已存在则不重复添加
+    for (let i = 0; i < this._log.exercises.length; i++) {
+      if (this._log.exercises[i].name === name) {
+        wx.showToast({ title: '「' + name + '」已在清单中', icon: 'none' });
+        return;
+      }
+    }
+    const p = S.getProfile();
+    const last = p.autoFill ? S.lastPerf(name, this.data.date) : null;
+    const cnt = p.defSets || 3;
+    const sets = [];
+    for (let i = 0; i < cnt; i++) {
+      if (last && last.sets[i]) sets.push({ id: U.uid(), w: last.sets[i].w, r: last.sets[i].r, ok: false });
+      else if (last) {
+        const t = last.sets[last.sets.length - 1];
+        sets.push({ id: U.uid(), w: t.w, r: t.r, ok: false });
+      } else {
+        sets.push({ id: U.uid(), w: '', r: mode === 'time' ? '' : '', ok: false });
+      }
+    }
+    this._log.exercises.push({ id: U.uid(), name: name, part: part, mode: mode, sets: sets });
     this.persist();
     this.render();
-    wx.showToast({ title: '已添加 ' + name, icon: 'none' });
+    wx.showToast({
+      title: last ? '已带入上次：' + U.num(last.sets[0].w) + 'kg×' + U.num(last.sets[0].r) : '已添加 ' + name,
+      icon: 'none'
+    });
   },
 
   /* ---------- 组数编辑 ---------- */
